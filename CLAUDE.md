@@ -4,9 +4,9 @@
 Простой Telegram бот, который принимает файлы (PDF, PNG, JPEG) и автоматически пересылает их на указанный email.
 
 ## Технологии
-- **Python 3.9+**
-- **python-telegram-bot** — библиотека для работы с Telegram API
-- **SMTP** — для отправки email (Gmail/Yandex)
+- **Node.js 18+**
+- **node-telegram-bot-api** — библиотека для работы с Telegram API
+- **nodemailer** — для отправки email (Gmail/Yandex)
 
 ## Функциональность
 1. Бот получает файл от пользователя в Telegram
@@ -44,12 +44,12 @@ SMTP_PORT=587
 
 ### Шаг 4: Установи зависимости
 ```bash
-pip install -r requirements.txt
+npm install
 ```
 
 ### Шаг 5: Запусти бота
 ```bash
-python bot.py
+npm start
 ```
 
 ## Деплой
@@ -70,11 +70,16 @@ python bot.py
 ### Вариант 3: Запуск на своем сервере/VPS
 ```bash
 # Установи зависимости
-pip install -r requirements.txt
+npm install
 
 # Запусти в фоне
-nohup python bot.py &
+nohup npm start &
 ```
+
+### Вариант 4: Netlify (для этого проекта)
+1. Код уже на Node.js
+2. Можно запустить локально или на VPS
+3. Netlify Functions не подходят для long-polling ботов
 
 ## Структура проекта
 ```
