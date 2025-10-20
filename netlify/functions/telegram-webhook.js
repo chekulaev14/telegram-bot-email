@@ -23,12 +23,18 @@ const transporter = nodemailer.createTransport({
 });
 
 // Функция отправки сообщения в Telegram
-async function sendMessage(chatId, text) {
+async function sendMessage(chatId, text, keyboard = null) {
     try {
-        await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        const payload = {
             chat_id: chatId,
             text: text
-        });
+        };
+
+        if (keyboard) {
+            payload.reply_markup = keyboard;
+        }
+
+        await axios.post(`${TELEGRAM_API}/sendMessage`, payload);
     } catch (error) {
         console.error('Ошибка отправки сообщения:', error.message);
     }
@@ -107,29 +113,49 @@ exports.handler = async (event) => {
         const update = JSON.parse(event.body);
         console.log('Получено обновление:', JSON.stringify(update));
 
-        // Обработка команды /start
-        if (update.message && update.message.text === '/start') {
+        // Обработка команды /start или текста "Старт"
+        if (update.message && (update.message.text === '/start' || update.message.text === 'Старт')) {
             const chatId = update.message.chat.id;
+
+            // Клавиатура с кнопкой "Старт"
+            const keyboard = {
+                keyboard: [
+                    [{ text: '📎 Отправить файл' }],
+                    [{ text: 'ℹ️ Помощь' }]
+                ],
+                resize_keyboard: true,
+                one_time_keyboard: false
+            };
+
             await sendMessage(chatId,
                 "👋 Привет! Я бот для пересылки файлов на email.\n\n" +
-                "📎 Отправь мне файл (PDF, PNG, JPEG), и я перешлю его на почту.\n\n" +
+                "📎 Просто отправь мне файл (PDF, PNG, JPEG), и я перешлю его на почту.\n\n" +
                 "Поддерживаемые форматы:\n" +
                 "• PDF документы\n" +
-                "• Изображения (PNG, JPEG, JPG)"
+                "• Изображения (PNG, JPEG, JPG)",
+                keyboard
             );
         }
 
-        // Обработка команды /help
-        if (update.message && update.message.text === '/help') {
+        // Обработка команды /help или кнопки "Помощь"
+        if (update.message && (update.message.text === '/help' || update.message.text === 'ℹ️ Помощь')) {
             const chatId = update.message.chat.id;
             await sendMessage(chatId,
                 "ℹ️ Инструкция:\n\n" +
-                "1. Отправь мне файл (PDF, PNG, JPEG)\n" +
+                "1. Просто отправь мне файл (PDF, PNG, JPEG)\n" +
                 "2. Я автоматически перешлю его на email\n" +
                 "3. Получишь уведомление об успехе\n\n" +
-                "Команды:\n" +
-                "/start - Начало работы\n" +
-                "/help - Эта справка"
+                "Всё очень просто - нажми 📎 на скрепку снизу и выбери файл!"
+            );
+        }
+
+        // Обработка кнопки "Отправить файл"
+        if (update.message && update.message.text === '📎 Отправить файл') {
+            const chatId = update.message.chat.id;
+            await sendMessage(chatId,
+                "📎 Отлично!\n\n" +
+                "Нажми на скрепку 📎 внизу экрана и выбери файл который хочешь отправить.\n\n" +
+                "Я приму PDF документы и изображения (PNG, JPEG)."
             );
         }
 
