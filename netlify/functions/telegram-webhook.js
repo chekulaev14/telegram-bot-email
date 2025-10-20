@@ -117,10 +117,9 @@ exports.handler = async (event) => {
         if (update.message && (update.message.text === '/start' || update.message.text === 'Старт')) {
             const chatId = update.message.chat.id;
 
-            // Клавиатура с кнопкой "Старт"
+            // Клавиатура с кнопкой
             const keyboard = {
                 keyboard: [
-                    [{ text: '📎 Отправить файл' }],
                     [{ text: 'ℹ️ Помощь' }]
                 ],
                 resize_keyboard: true,
@@ -149,15 +148,6 @@ exports.handler = async (event) => {
             );
         }
 
-        // Обработка кнопки "Отправить файл"
-        if (update.message && update.message.text === '📎 Отправить файл') {
-            const chatId = update.message.chat.id;
-            await sendMessage(chatId,
-                "📎 Отлично!\n\n" +
-                "Нажми на скрепку 📎 внизу экрана и выбери файл который хочешь отправить.\n\n" +
-                "Я приму PDF документы и изображения (PNG, JPEG)."
-            );
-        }
 
         // Обработка документа
         if (update.message && update.message.document) {
